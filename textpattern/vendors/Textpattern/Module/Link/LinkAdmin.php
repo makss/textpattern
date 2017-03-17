@@ -36,6 +36,18 @@ use Textpattern\Search\Filter;
 
 class LinkAdmin
 {
+
+    private $all_link_cats;
+    private $all_link_authors;
+    private $vars = array('category', 'url', 'linkname', 'linksort', 'description', 'id');
+    private $available_steps = array(
+        'link_list'          => false,
+        'link_edit'          => false,
+        'link_save'          => true,
+        'link_change_pageby' => true,
+        'link_multi_edit'    => true,
+    );
+
     /**
      * Constructor.
      *
@@ -45,21 +57,12 @@ class LinkAdmin
     {
         require_privs('link');
 
-        global $vars, $step, $all_link_cats, $all_link_authors;
-        $vars = array('category', 'url', 'linkname', 'linksort', 'description', 'id');
+        global $step;
 
-        $all_link_cats = getTree('root', 'link');
-        $all_link_authors = the_privileged('link.edit.own');
+        $this->all_link_cats = getTree('root', 'link');
+        $this->all_link_authors = the_privileged('link.edit.own');
 
-        $available_steps = array(
-            'link_list'          => false,
-            'link_edit'          => false,
-            'link_save'          => true,
-            'link_change_pageby' => true,
-            'link_multi_edit'    => true,
-        );
-
-        if ($step && bouncer($step, $available_steps)) {
+        if ($step && bouncer($step, $this->available_steps)) {
             $this->$step();
         } else {
             $this->link_list();
@@ -400,11 +403,11 @@ class LinkAdmin
 
     private function link_edit($message = '')
     {
-        global $vars, $event, $step, $txp_user;
+        global $event, $step, $txp_user;
 
         pagetop(gTxt('tab_link'), $message);
 
-        extract(array_map('assert_string', gpsa($vars)));
+        extract(array_map('assert_string', gpsa($this->vars)));
 
         $is_edit = ($id && $step == 'link_edit');
 
@@ -489,9 +492,9 @@ class LinkAdmin
 
     private function link_save()
     {
-        global $vars, $txp_user;
+        global $txp_user;
 
-        $varray = array_map('assert_string', gpsa($vars));
+        $varray = array_map('assert_string', gpsa($this->vars));
         extract(doSlash($varray));
 
         if ($id) {
@@ -574,10 +577,8 @@ class LinkAdmin
 
     private function link_multiedit_form($page, $sort, $dir, $crit, $search_method)
     {
-        global $all_link_cats, $all_link_authors;
-
-        $categories = $all_link_cats ? treeSelectInput('category', $all_link_cats, '') : '';
-        $authors = $all_link_authors ? selectInput('author', $all_link_authors, '', true) : '';
+        $categories = $this->all_link_cats ? treeSelectInput('category', $this->all_link_cats, '') : '';
+        $authors = $this->all_link_authors ? selectInput('author', $this->all_link_authors, '', true) : '';
 
         $methods = array(
             'changecategory' => array('label' => gTxt('changecategory'), 'html' => $categories),
@@ -604,12 +605,12 @@ class LinkAdmin
 
     private function link_multi_edit()
     {
-        global $txp_user, $all_link_cats, $all_link_authors;
+        global $txp_user;
 
         // Empty entry to permit clearing the category
         $categories = array('');
 
-        foreach ($all_link_cats as $row) {
+        foreach ($this->all_link_cats as $row) {
             $categories[] = $row['name'];
         }
 
@@ -655,7 +656,7 @@ class LinkAdmin
                 break;
             case 'changeauthor':
                 $val = ps('author');
-                if (has_privs('link.edit') && in_array($val, $all_link_authors)) {
+                if (has_privs('link.edit') && in_array($val, $this->all_link_authors)) {
                     $key = 'author';
                 }
                 break;
@@ -693,5 +694,4 @@ class LinkAdmin
 
         $this->link_list();
     }
-
 }
