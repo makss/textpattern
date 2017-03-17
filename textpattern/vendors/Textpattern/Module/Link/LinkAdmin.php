@@ -73,7 +73,7 @@ class LinkAdmin
      * @param string|array $message The activity message
      */
 
-    public function link_list($message = '')
+    private function link_list($message = '')
     {
         global $event, $step, $txp_user;
 
@@ -398,7 +398,7 @@ class LinkAdmin
      * @param string|array $message The activity message
      */
 
-    public function link_edit($message = '')
+    private function link_edit($message = '')
     {
         global $vars, $event, $step, $txp_user;
 
@@ -480,14 +480,14 @@ class LinkAdmin
      * @deprecated in 4.6.0
      */
 
-    public function linkcategory_popup($cat = '')
+    private function linkcategory_popup($cat = '')
     {
         return event_category_popup('link', $cat, 'link_category');
     }
 
     // -------------------------------------------------------------
 
-    public function link_save()
+    private function link_save()
     {
         global $vars, $txp_user;
 
@@ -564,15 +564,15 @@ class LinkAdmin
 
     // -------------------------------------------------------------
 
-    public function link_change_pageby()
+    private function link_change_pageby()
     {
-        Txp::get('\Textpattern\Admin\Paginator')->change();
+        \Txp::get('\Textpattern\Admin\Paginator')->change();
         $this->link_list();
     }
 
     // -------------------------------------------------------------
 
-    public function link_multiedit_form($page, $sort, $dir, $crit, $search_method)
+    private function link_multiedit_form($page, $sort, $dir, $crit, $search_method)
     {
         global $all_link_cats, $all_link_authors;
 
@@ -602,7 +602,7 @@ class LinkAdmin
 
     // -------------------------------------------------------------
 
-    public function link_multi_edit()
+    private function link_multi_edit()
     {
         global $txp_user, $all_link_cats, $all_link_authors;
 
