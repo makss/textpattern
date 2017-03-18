@@ -32,6 +32,48 @@ namespace Textpattern\Module\Link;
 class Link
 {
     /**
+     * Module tags
+     */
+
+    private static $tags = array(
+        'linklist',
+        'link',
+        'linkdesctitle',
+        'link_name',
+        'link_url',
+        'link_author',
+        'link_description',
+        'link_date',
+        'link_category',
+        'link_id',
+        'if_first_link',
+        'if_last_link'
+    );
+
+    /**
+     * Register module tags
+     *
+     * or use alternative
+     * Txp::get('\Textpattern\Tag\Registry')->registerModuleTags('class');
+     */
+
+    public static function registerTags()
+    {
+        foreach (self::$tags as $tag) {
+            \Txp::get('\Textpattern\Tag\Registry')->register(array(__CLASS__, $tag), $tag);
+        }
+    }
+
+    /**
+     * Return module tags
+     */
+
+    public static function getTags()
+    {
+        return self::$tags;
+    }
+
+    /**
      * Checks if the link is the first in the list.
      *
      * @param  array  $atts
@@ -425,6 +467,5 @@ class Link
             ' href="'.txpspecialchars($rs['url']).'"'
         );
     }
-
 
 }

@@ -181,21 +181,10 @@ Txp::get('\Textpattern\Tag\Registry')
 
 
 // Module Link
-Txp::get('\Textpattern\Tag\Registry')
-    ->register(array('\Textpattern\Module\Link\Link', 'linklist'), 'linklist')
-    ->register(array('\Textpattern\Module\Link\Link', 'link'), 'link')
-    ->register(array('\Textpattern\Module\Link\Link', 'linkdesctitle'), 'linkdesctitle')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_name'), 'link_name')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_url'), 'link_url')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_author'), 'link_author')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_description'), 'link_description')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_date'), 'link_date')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_category'), 'link_category')
-    ->register(array('\Textpattern\Module\Link\Link', 'link_id'), 'link_id')
-    ->register(array('\Textpattern\Module\Link\Link', 'if_first_link'), 'if_first_link')
-    ->register(array('\Textpattern\Module\Link\Link', 'if_last_link'), 'if_last_link');
 
-
+    // What's better?   `->registerTags()`  vs  `->registerModuleTags()`
+//    Txp::get('\Textpattern\Module\Link\Link')->registerTags();
+    Txp::get('\Textpattern\Tag\Registry')->registerModuleTags('\Textpattern\Module\Link\Link');
 
 // -------------------------------------------------------------
 

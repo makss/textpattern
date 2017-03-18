@@ -69,6 +69,28 @@ class Registry implements \Textpattern\Container\ReusableInterface
     }
 
     /**
+     * Registers a module tags.
+     *
+     * <code>
+     * Txp::get('\Textpattern\Tag\Registry')->registerModuleTags('class');
+     * </code>
+     *
+     * @param  class       $class    The module class
+     */
+
+    public function registerModuleTags($class)
+    {
+        if (method_exists($class, 'getTags')) {
+            foreach ($class::getTags() as $tag) {
+                $callback = array($class, $tag);
+                if (is_callable($callback, true)) {
+                    $this->tags[$tag] = $callback;
+                }
+            }
+        }
+    }
+
+    /**
      * Processes a tag by name.
      *
      * @param  string      $tag   The tag
