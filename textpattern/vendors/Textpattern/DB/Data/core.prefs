@@ -657,6 +657,13 @@
         "html": "yesnoradio",
         "position": "240"
     },
+    "module_link_status": {
+        "val": "2",
+        "type": "0",
+        "event": "admin",
+        "html": "module_status",
+        "position": "240"
+    },
     "default_publish_status": {
         "val": "4",
         "type": "0",

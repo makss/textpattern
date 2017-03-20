@@ -813,3 +813,22 @@ function real_max_upload_size($user_max)
 
     return $real_max;
 }
+
+/**
+ * Renders a HTML &lt;select&gt; list of module status.
+ *
+ * @param  string $name HTML name and id of the widget
+ * @param  string $val  Initial (or current) selected item
+ * @return string HTML
+ */
+
+function module_status($name, $val)
+{
+    $vals = array(
+        '0'   => gTxt('module_off'),
+        '1'   => gTxt('module_hide'),
+        '2'   => gTxt('module_on'),
+    );
+
+    return selectInput($name, $vals, $val, '', '', $name);
+}

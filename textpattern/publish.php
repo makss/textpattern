@@ -164,6 +164,12 @@ $textarray = (txpinterface == 'css') ? array() : load_lang(LANG);
 // Tidy up the site.
 janitor();
 
+// Modules init
+if (!empty($prefs['module_link_status'])) {
+    Txp::get('\Textpattern\Tag\Registry')->registerModuleTags('\Textpattern\Module\Link\Link');
+}
+
+
 // Here come the plugins.
 if ($use_plugins) {
     load_plugins();

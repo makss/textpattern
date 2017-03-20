@@ -179,13 +179,6 @@ Txp::get('\Textpattern\Tag\Registry')
     ->register('comment_preview')
     ->register('comment_submit');
 
-
-// Module Link
-
-    // What's better?   `->registerTags()`  vs  `->registerModuleTags()`
-//    Txp::get('\Textpattern\Module\Link\Link')->registerTags();
-    Txp::get('\Textpattern\Tag\Registry')->registerModuleTags('\Textpattern\Module\Link\Link');
-
 // -------------------------------------------------------------
 
 function page_title($atts)

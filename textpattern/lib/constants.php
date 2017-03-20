@@ -929,3 +929,8 @@ define('TEXTPATTERN_ANNOUNCE_ASYNC', 0x4);
  */
 
 define('TEXTPATTERN_ANNOUNCE_REGULAR', 0x8);
+
+
+define('MODULE_OFF', 0);
+define('MODULE_HIDE', 1);
+define('MODULE_ON', 2);

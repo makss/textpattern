@@ -213,20 +213,21 @@ if ($connected && numRows(safe_query("SHOW TABLES LIKE '".PFX."textpattern'"))) 
     $theme = \Textpattern\Admin\Theme::init();
 
     include txpath.'/lib/txplib_head.php';
+    if (@$prefs['module_link_status'] == MODULE_ON) {
+        register_callback(array('\Textpattern\Module\Link\LinkAdmin', 'init'), 'link');
+        
+    } else {
+        unset($txp_permissions['link']);
+    }
 
     require_privs($event);
     callback_event($event, $step, 1);
+    $inc = txpath.'/include/txp_'.$event.'.php';
 
-    if ($event == 'link') {
-        new \Textpattern\Module\Link\LinkAdmin();
-
-    } else {
-        $inc = txpath.'/include/txp_'.$event.'.php';
-
-        if (is_readable($inc)) {
-            include($inc);
-        }
+    if (is_readable($inc)) {
+        include($inc);
     }
+
     callback_event($event, $step, 0);
 
     end_page();

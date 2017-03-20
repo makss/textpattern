@@ -37,10 +37,10 @@ use Textpattern\Search\Filter;
 class LinkAdmin
 {
 
-    private $all_link_cats;
-    private $all_link_authors;
-    private $vars = array('category', 'url', 'linkname', 'linksort', 'description', 'id');
-    private $available_steps = array(
+    private static $all_link_cats;
+    private static $all_link_authors;
+    private static $vars = array('category', 'url', 'linkname', 'linksort', 'description', 'id');
+    private static $available_steps = array(
         'link_list'          => false,
         'link_edit'          => false,
         'link_save'          => true,
@@ -53,19 +53,20 @@ class LinkAdmin
      *
      */
 
-    public function __construct()
+//    public function __construct()
+    public static function init()
     {
         require_privs('link');
 
         global $step;
 
-        $this->all_link_cats = getTree('root', 'link');
-        $this->all_link_authors = the_privileged('link.edit.own');
+        self::$all_link_cats = getTree('root', 'link');
+        self::$all_link_authors = the_privileged('link.edit.own');
 
-        if ($step && bouncer($step, $this->available_steps)) {
-            $this->$step();
+        if ($step && bouncer($step, self::$available_steps)) {
+            self::$step();
         } else {
-            $this->link_list();
+            self::link_list();
         }
     }
 
@@ -76,7 +77,7 @@ class LinkAdmin
      * @param string|array $message The activity message
      */
 
-    private function link_list($message = '')
+    private static function link_list($message = '')
     {
         global $event, $step, $txp_user;
 
@@ -377,7 +378,7 @@ class LinkAdmin
             echo n.tag_end('tbody').
                 n.tag_end('table').
                 n.tag_end('div').
-                $this->link_multiedit_form($page, $sort, $dir, $crit, $search_method).
+                self::link_multiedit_form($page, $sort, $dir, $crit, $search_method).
                 tInput().
                 n.tag_end('form').
 
@@ -401,13 +402,13 @@ class LinkAdmin
      * @param string|array $message The activity message
      */
 
-    private function link_edit($message = '')
+    private static function link_edit($message = '')
     {
         global $event, $step, $txp_user;
 
         pagetop(gTxt('tab_link'), $message);
 
-        extract(array_map('assert_string', gpsa($this->vars)));
+        extract(array_map('assert_string', gpsa(self::$vars)));
 
         $is_edit = ($id && $step == 'link_edit');
 
@@ -421,7 +422,7 @@ class LinkAdmin
                 extract($rs);
 
                 if (!has_privs('link.edit') && !($author === $txp_user && has_privs('link.edit.own'))) {
-                    $this->link_list(gTxt('restricted_area'));
+                    self::link_list(gTxt('restricted_area'));
 
                     return;
                 }
@@ -475,26 +476,13 @@ class LinkAdmin
         }
     }
 
-    /**
-     * Legacy link category HTML select field.
-     *
-     * @param      string $cat
-     * @return     string
-     * @deprecated in 4.6.0
-     */
-
-    private function linkcategory_popup($cat = '')
-    {
-        return event_category_popup('link', $cat, 'link_category');
-    }
-
     // -------------------------------------------------------------
 
-    private function link_save()
+    private static function link_save()
     {
         global $txp_user;
 
-        $varray = array_map('assert_string', gpsa($this->vars));
+        $varray = array_map('assert_string', gpsa(self::$vars));
         extract(doSlash($varray));
 
         if ($id) {
@@ -502,14 +490,14 @@ class LinkAdmin
         }
 
         if ($linkname === '' && $url === '' && $description === '') {
-            $this->link_list(array(gTxt('link_empty'), E_ERROR));
+            self::link_list(array(gTxt('link_empty'), E_ERROR));
 
             return;
         }
 
         $author = fetch('author', 'txp_link', 'id', $id);
         if (!has_privs('link.edit') && !($author === $txp_user && has_privs('link.edit.own'))) {
-            $this->link_list(gTxt('restricted_area'));
+            self::link_list(gTxt('restricted_area'));
 
             return;
         }
@@ -562,23 +550,23 @@ class LinkAdmin
             $message = array(gTxt('link_save_failed'), E_ERROR);
         }
 
-        $this->link_list($message);
+        self::link_list($message);
     }
 
     // -------------------------------------------------------------
 
-    private function link_change_pageby()
+    private static function link_change_pageby()
     {
         \Txp::get('\Textpattern\Admin\Paginator')->change();
-        $this->link_list();
+        self::link_list();
     }
 
     // -------------------------------------------------------------
 
-    private function link_multiedit_form($page, $sort, $dir, $crit, $search_method)
+    private static function link_multiedit_form($page, $sort, $dir, $crit, $search_method)
     {
-        $categories = $this->all_link_cats ? treeSelectInput('category', $this->all_link_cats, '') : '';
-        $authors = $this->all_link_authors ? selectInput('author', $this->all_link_authors, '', true) : '';
+        $categories = self::$all_link_cats ? treeSelectInput('category', self::$all_link_cats, '') : '';
+        $authors = self::$all_link_authors ? selectInput('author', self::$all_link_authors, '', true) : '';
 
         $methods = array(
             'changecategory' => array('label' => gTxt('changecategory'), 'html' => $categories),
@@ -603,21 +591,21 @@ class LinkAdmin
 
     // -------------------------------------------------------------
 
-    private function link_multi_edit()
+    private static function link_multi_edit()
     {
         global $txp_user;
 
         // Empty entry to permit clearing the category
         $categories = array('');
 
-        foreach ($this->all_link_cats as $row) {
+        foreach (self::$all_link_cats as $row) {
             $categories[] = $row['name'];
         }
 
         $selected = ps('selected');
 
         if (!$selected or !is_array($selected)) {
-            $this->link_list();
+            self::link_list();
 
             return;
         }
@@ -656,7 +644,7 @@ class LinkAdmin
                 break;
             case 'changeauthor':
                 $val = ps('author');
-                if (has_privs('link.edit') && in_array($val, $this->all_link_authors)) {
+                if (has_privs('link.edit') && in_array($val, self::$all_link_authors)) {
                     $key = 'author';
                 }
                 break;
@@ -685,13 +673,13 @@ class LinkAdmin
         if ($changed) {
             update_lastmod('link_updated', $changed);
 
-            $this->link_list(gTxt(
+            self::link_list(gTxt(
                 ($method == 'delete' ? 'links_deleted' : 'link_updated'),
                 array(($method == 'delete' ? '{list}' : '{name}') => join(', ', $changed))));
 
             return;
         }
 
-        $this->link_list();
+        self::link_list();
     }
 }
